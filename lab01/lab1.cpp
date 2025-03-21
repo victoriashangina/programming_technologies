@@ -11,152 +11,134 @@ struct Student
     Student* next;
 };
 
-void first_output(Student* &pNode, string name, int age, double height){
-    Student* newNode = new Student;
-    newNode->name = name;
-    newNode->age = age;
-    newNode->height = height;
-    newNode->next = pNode;
-    pNode = newNode;
-}
 
-void second_output(Student* &pNode, string name, int age, double height){
-    Student* newNode = new Student;
-    newNode->name = name;
-    newNode->age = age;
-    newNode->height = height;
-    newNode->next = nullptr;
 
-    if (pNode == nullptr) {
+class People {
+public:
+    void add_forward(Student* &pNode, string name, int age, double height){
+        Student* newNode = new Student{name, age, height, pNode};
         pNode = newNode;
     }
-    else {
+
+    
+    
+    void add_end(Student* &pNode, string name, int age, double height){
+        Student* newNode = new Student{name, age, height, nullptr};
+        if (!pNode) {
+            pNode = newNode;
+        } else {
+            Student* tmp = pNode;
+            while (tmp->next)
+                tmp = tmp->next;
+            tmp->next = newNode;
+        }
+    }
+
+    
+    void add_after(Student* &pNode, string Node, string name, int age, double height){
+        if (!pNode) {
+            cout << "EMPTY\n";
+            return;
+        }
         Student* tmp = pNode;
-        while (tmp->next != nullptr)
+        while (tmp && tmp->name != Node)
             tmp = tmp->next;
+        if (!tmp) {
+            cout << "No_Elements\n";
+            return;
+        }
+        Student* newNode = new Student{name, age, height, tmp->next};
         tmp->next = newNode;
     }
-}
 
-void third_output(Student* &pNode, string Node, string name, int age, double height){
-    if (pNode == nullptr) {
-        cout << "EMPTY\n";
-        return;
-    }
-    Student* tmp = pNode;
-    while (tmp != nullptr && tmp->name != Node) {
-        tmp = tmp->next;
-    }
     
-    if (tmp == nullptr) {
-        cout << "No_Elements\n";
-        return;
+    void add_before(Student* &pNode, string Node, string name, int age, double height) {
+        if (!pNode) {
+            cout << "empty\n";
+            return;
+        }
+        if (pNode->name == Node) {
+            add_forward(pNode, name, age, height);
+            return;
+        }
+        Student* tmp = pNode;
+        while (tmp && tmp->name != Node)
+            tmp = tmp->next;
+        if (!tmp) {
+            cout << "No_Element\n";
+            return;
+        }
+        Student* newNode = new Student{name, age, height, tmp->next};
+        tmp->next = newNode;
     }
 
-    // Insert new node after the found node
-    Student* newNode = new Student;
-    newNode->name = name;
-    newNode->age = age;
-    newNode->height = height;
-    newNode->next = tmp->next;
-    tmp->next = newNode;
-}
-
-void fourth_output(Student* &pNode, string Node, string name, int age, double height) {
-    if (pNode == nullptr) {
-        cout << "empty\n";
-        return;
-    }
-
-    if (pNode->name == Node) {
-        first_output(pNode, name, age, height);
-        return;
-    }
-
-    Student* tmp = pNode;
-    while (tmp != nullptr && tmp->name != Node) {
-        tmp = tmp->next;
-    }
-
-    if (tmp == nullptr) {
-        cout << "No_Element\n";
-        return;
-    }
-
-    Student* newNode = new Student;
-    newNode->name = name;
-    newNode->age = age;
-    newNode->height = height;
-    newNode->next = tmp->next;
-    tmp->next = newNode;
-}
-
-void Del(Student* &pNode, string Node) {
-    if (pNode == nullptr) {
-        cout << "empty\n";
-        return;
-    }
-
-    Student* tmp = pNode;
-    if (pNode->name == Node) {
-        pNode = pNode->next;
+    
+    void del(Student* &pNode, string Node) {
+        if (!pNode) {
+            cout << "empty\n";
+            return;
+        }
+        if (pNode->name == Node) {
+            Student* tmp = pNode;
+            pNode = pNode->next;
+            delete tmp;
+            return;
+        }
+        Student* prev = nullptr;
+        Student* tmp = pNode;
+        while (tmp && tmp->name != Node) {
+            prev = tmp;
+            tmp = tmp->next;
+        }
+        if (!tmp) {
+            cout << "No_Element\n";
+            return;
+        }
+        prev->next = tmp->next;
         delete tmp;
-        return;
     }
 
-    Student* prev = nullptr;
-    while (tmp != nullptr && tmp->name != Node) {
-        prev = tmp;
-        tmp = tmp->next;
+    
+    void show(Student* pNode) {
+        if (!pNode) {
+            cout << "empty\n";
+            return;
+        }
+        Student* tmp = pNode;
+        while (tmp) {
+            cout << "Name: " << tmp->name << "\nAge: " << tmp->age << "\nHeight: " << tmp->height << "\n\n";
+            tmp = tmp->next;
+        }
     }
-
-    if (tmp == nullptr) {
-        cout << "No_Element\n";
-        return;
-    }
-
-    prev->next = tmp->next;
-    delete tmp;
-}
-
-void Showmen(Student* pNode) {
-    if (pNode == nullptr) {
-        cout << "empty\n";
-        return;
-    }
-
-    Student* tmp = pNode;
-    while (tmp != nullptr) {
-        cout << "Name: " << tmp->name << "\nAge: " << tmp->age << "\nHeight: " << tmp->height << endl << endl;
-        tmp = tmp->next;
-    }
-}
+};
 
 int main() {
     Student* list1 = nullptr;
-    first_output(list1, "Petya", 15, 1.75);
-    Showmen(list1);
-    cout << "-----------------------------------------------------------------------" << endl << endl;
+    People studentList;
     
-    first_output(list1, "Masha", 16, 1.55);
-    Showmen(list1);
-    cout << "-----------------------------------------------------------------------" << endl << endl;
+    studentList.add_forward(list1, "Petya", 15, 1.75);
+    studentList.show(list1);
+    cout << "-----------------------------------------------------------------------\n\n";
     
-    third_output(list1, "Petya", "Vanya", 17, 1.85);
-    Showmen(list1);
-    cout << "-----------------------------------------------------------------------" << endl << endl;
+    studentList.add_forward(list1, "Masha", 16, 1.55);
+    studentList.show(list1);
+    cout << "-----------------------------------------------------------------------\n\n";
     
-    fourth_output(list1, "Vanya", "Vasya", 18, 1.99);
-    Showmen(list1);
-    cout << "-----------------------------------------------------------------------" << endl << endl;
+    studentList.add_after(list1, "Petya", "Vanya", 17, 1.85);
+    studentList.show(list1);
+    cout << "-----------------------------------------------------------------------\n\n";
     
-    Del(list1, "Masha");
-    Showmen(list1);
-    cout << "-----------------------------------------------------------------------" << endl << endl;
+    studentList.add_before(list1, "Vanya", "Vasya", 18, 1.99);
+    studentList.show(list1);
+    cout << "-----------------------------------------------------------------------\n\n";
     
-    second_output(list1, "Dasha", 19, 1.65);
-    Showmen(list1);
-    cout << "-----------------------------------------------------------------------" << endl << endl;
+    studentList.del(list1, "Masha");
+    studentList.show(list1);
+    cout << "-----------------------------------------------------------------------\n\n";
+    
+    studentList.add_end(list1, "Dasha", 19, 1.65);
+    studentList.show(list1);
+    cout << "-----------------------------------------------------------------------\n\n";
 
     return 0;
 }
